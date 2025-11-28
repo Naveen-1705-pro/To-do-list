@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Animated To-Do List</title>
+    <style>
+        /* Animated gradient background */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Floating animated background image */
+        .bg-image {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background-image: url("bg-icon.png"); /* your image here */
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.25;
+            animation: floatImage 10s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        /* You can duplicate and position more images if you like */
+        .bg-image.top-left {
+            top: 5%;
+            left: 5%;
+        }
+
+        .bg-image.bottom-right {
+            bottom: 5%;
+            right: 5%;
+            animation-delay: 2s;
+        }
+
+        /* Outer wrapper with animated border */
+        .outer-wrapper {
+            position: relative;
+            padding: 38px; /* thickness of animated border */
+            border-radius: 16px;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .outer-wrapper::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                130deg,
+                #ff6b6b,
+                #fddb92,
+                #1dd1a1,
+                #54a0ff,
+                #5f27cd,
+                #ff9ff3
+            );
+            background-size: 300% 300%;
+            animation: borderFlow 6s linear infinite;
+            z-index: -1;
+        }
+
+        /* Inner container with content */
+        .container {
+            position: relative;
+            max-width: 420px;
+            width: 90%;
+            background: rgba(255, 255, 255, 0.94);
+            padding: 20px 25px 30px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            color: #333333;
+            letter-spacing: 1px;
+        }
+
+        /* Input row */
+        .input-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        #taskInput {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #cccccc;
+            border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+            transition: box-shadow 0.3s, transform 0.2s, border-color 0.3s;
+        }
+
+        #taskInput:focus {
+            box-shadow: 0 0 8px rgba(0,123,255,0.5);
+            transform: translateY(-1px);
+            border-color: #007bff;
+        }
+
+        /* Add button with hover animation */
+        #addBtn {
+            padding: 10px 16px;
+            border: none;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: #ffffff;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+        }
+
+        #addBtn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+
+        #addBtn:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: none;
+        }
+
+        /* Task list */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Task item with slide-in animation */
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafafa;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            font-size: 14px;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        li.completed span.task-text {
+            text-decoration: line-through;
+            color: #888888;
+        }
+
+        .task-text {
+            flex: 1;
+            padding-right: 8px;
+        }
+
+        /* Buttons inside list items */
+        .btn-small {
+            border: none;
+            padding: 4px 8px;
+            margin-left: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-small:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+
+        .complete-btn {
+            background: #007bff;
+            color: #ffffff;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: #ffffff;
+        }
+
+        /* Keyframe animations */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes borderFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes bounceOut {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+        }
+
+        /* Floating image animation */
+        @keyframes floatImage {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+            25% {
+                transform: translateY(-15px) translateX(10px);
+            }
+            50% {
+                transform: translateY(0) translateX(20px);
+            }
+            75% {
+                transform: translateY(15px) translateX(10px);
+            }
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- animated background images -->
+    <div class="bg-image top-left"></div>
+    <div class="bg-image bottom-right"></div>
+
+    <div class="outer-wrapper">
+        <div class="container">
+            <h1>Animated To-Do List</h1>
+
+            <!-- Input section -->
+            <div class="input-row">
+                <input type="text" id="taskInput" placeholder="Enter a new task">
+                <button id="addBtn">Add</button>
+            </div>
+
+            <!-- Task list -->
+            <ul id="taskList"></ul>
+        </div>
+    </div>
+
+    <script>
+        const taskInput = document.getElementById("taskInput");
+        const addBtn = document.getElementById("addBtn");
+        const taskList = document.getElementById("taskList");
+
+        addBtn.addEventListener("click", addTask);
+
+        taskInput.addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                addTask();
+            }
+        });
+
+        function addTask() {
+            const taskText = taskInput.value.trim();
+
+            if (taskText === "") {
+                alert("Please enter a task.");
+                return;
+            }
+
+            const li = document.createElement("li");
+
+            const span = document.createElement("span");
+            span.className = "task-text";
+            span.textContent = taskText;
+
+            const completeBtn = document.createElement("button");
+            completeBtn.textContent = "Done";
+            completeBtn.className = "btn-small complete-btn";
+            completeBtn.onclick = function () {
+                li.classList.toggle("completed");
+            };
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Delete";
+            deleteBtn.className = "btn-small delete-btn";
+            deleteBtn.onclick = function () {
+                li.style.animation = "bounceOut 0.25s forwards";
+                setTimeout(() => {
+                    taskList.removeChild(li);
+                }, 250);
+            };
+
+            li.appendChild(span);
+            li.appendChild(completeBtn);
+            li.appendChild(deleteBtn);
+
+            taskList.appendChild(li);
+
+            taskInput.value = "";
+            taskInput.focus();
+        }
+    </script>
+</body>
+</html>
